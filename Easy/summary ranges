@@ -1,0 +1,123 @@
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+
+
+// ASSUMPTION space is guranteed
+int convertNum(long num, char *str)
+{
+    int digits = 0;
+    long temp = 0;
+    int ans = 0;
+
+    if(num < 0)
+    {
+        str[0] = '-';
+        str++;
+        ans++;
+        num *= (-1);
+    }
+    temp = num;
+    while(temp > 0)
+    {
+        temp /= 10;
+        digits++;
+    }
+
+    if(num == 0)
+    {
+        digits = 1;
+    }
+    
+    ans += digits;
+
+    while(digits > 0)
+    {
+        digits--;
+        char currDigit = ((num % 10) + '0');
+        num /= 10;
+
+        str[digits] = currDigit;
+    }
+
+    return ans;
+}
+
+char** summaryRanges(int* nums, int numsSize, int* returnSize) {
+    char **ppAns = (char**)malloc(sizeof(char*) * numsSize);
+    int ansWriteIdx = 0;
+    long rangeStart = 0;
+    int writtenChars = 0;
+
+    for(int i = 0 ; i < numsSize; i ++)
+    {
+        int len = 3 + (11*2);
+        ppAns[i] = (char*)malloc(sizeof(char) * (len + 1));
+    }
+
+    if(numsSize == 0)
+    {
+        *returnSize = 0;
+        return ppAns;
+    }
+
+    rangeStart = nums[0];
+
+    for(int i = 1; i < numsSize ; i++)
+    {
+        if(nums[i] != (nums[i-1]+1))
+        {
+            // add the start number to answer string
+            writtenChars = convertNum(rangeStart, ppAns[ansWriteIdx]);
+
+            if(rangeStart == nums[i-1])
+            {
+                ppAns[ansWriteIdx][writtenChars] = '\0';
+                printf("%s \n", ppAns[ansWriteIdx]);
+            }
+            else
+            {
+                // close the range
+                //printf("%s \n", ppAns[ansWriteIdx]);
+                ppAns[ansWriteIdx][writtenChars++] = '-';
+                //printf("%s \n", ppAns[ansWriteIdx]);
+                ppAns[ansWriteIdx][writtenChars++] = '>';
+                //printf("%s \n", ppAns[ansWriteIdx]);
+                writtenChars += convertNum(nums[i-1], ppAns[ansWriteIdx] + writtenChars);
+                ppAns[ansWriteIdx][writtenChars] = '\0';
+                printf("%s \n", ppAns[ansWriteIdx]);
+
+            }
+
+            ansWriteIdx++;
+            rangeStart = nums[i];
+        }
+    }
+
+            // add the start number to answer string
+            writtenChars = convertNum(rangeStart, ppAns[ansWriteIdx]);
+
+            if(rangeStart == nums[numsSize-1])
+            {
+                ppAns[ansWriteIdx][writtenChars] = '\0';
+                printf("%s \n", ppAns[ansWriteIdx]);
+            }
+            else
+            {
+                // close the range
+                //printf("%s \n", ppAns[ansWriteIdx]);
+                ppAns[ansWriteIdx][writtenChars++] = '-';
+                //printf("%s \n", ppAns[ansWriteIdx]);
+                ppAns[ansWriteIdx][writtenChars++] = '>';
+                //printf("%s \n", ppAns[ansWriteIdx]);
+                writtenChars += convertNum(nums[numsSize-1], ppAns[ansWriteIdx] + writtenChars);
+                ppAns[ansWriteIdx][writtenChars] = '\0';
+                printf("%s \n", ppAns[ansWriteIdx]);
+
+            }
+
+            ansWriteIdx++;
+
+    *returnSize = ansWriteIdx;
+    return ppAns;
+}
