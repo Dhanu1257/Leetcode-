@@ -1,0 +1,60 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+void traversal(struct TreeNode * root, int * prev_element, int * cur_mode, int * max_mode, int * ret_arr, int * ret_arr_index)
+{
+    if(root)
+    {
+        traversal(root->left, prev_element, cur_mode, max_mode, ret_arr, ret_arr_index);
+        if(root->val == *prev_element)
+        {
+            *cur_mode += 1;
+        }
+        else
+        {
+            *cur_mode = 1;
+        }
+
+        *prev_element = root->val;
+
+        if(*cur_mode > *max_mode)
+        {
+            *max_mode = *cur_mode;
+
+            *ret_arr_index = 0;
+            ret_arr[*ret_arr_index] = root->val;
+            *ret_arr_index += 1;
+        }
+        else if(*cur_mode == *max_mode)
+        {
+            ret_arr[*ret_arr_index] = root->val;
+            *ret_arr_index += 1; 
+        }
+        traversal(root->right, prev_element, cur_mode, max_mode, ret_arr, ret_arr_index);
+
+
+    }
+    return;
+}
+
+int* findMode(struct TreeNode* root, int* returnSize)
+{
+    int  prev_element = INT_MIN;
+    int  cur_mode = 0;
+    int  max_mode = 0;
+
+    int * ret_arr = (int *)malloc(sizeof(int) * 10000);
+    int ret_arr_index = 0;
+
+    traversal(root, &prev_element, &cur_mode, &max_mode, ret_arr, &ret_arr_index);
+    *returnSize = ret_arr_index;
+    return ret_arr;
+}
