@@ -1,0 +1,68 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     struct TreeNode *left;
+ *     struct TreeNode *right;
+ * };
+ */
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+typedef struct
+{
+    double running_sum;
+    int num_nodes;
+}hashnode;
+
+hashnode * hashtable;
+
+int find_height(struct TreeNode * root)
+{
+    if(root)
+    {
+        int l_tree_height = find_height(root->left);
+        int r_tree_height = find_height(root->right);
+
+        return (l_tree_height >= r_tree_height) ? (l_tree_height + 1) : (r_tree_height + 1);
+    }
+    return 0;
+}
+
+void traversal(struct TreeNode * root, hashnode * hashtable, int level)
+{
+    if(root)
+    {
+        hashtable[level].running_sum += root->val;
+        hashtable[level].num_nodes += 1;
+
+        traversal(root->left, hashtable, level+1);
+        traversal(root->right, hashtable, level+1);
+        return;
+    }
+    return;
+}
+
+double* averageOfLevels(struct TreeNode* root, int* returnSize) 
+{
+    int height = find_height(root);
+
+    hashtable = (hashnode *)malloc(sizeof(hashnode) * height);
+    int i=0;
+    for(i=0; i<height; i++)
+    {
+        hashtable[i].running_sum = 0;
+        hashtable[i].num_nodes = 0;
+    }    
+
+    int level = 0;
+    traversal(root, hashtable, level);
+
+    double * ret_arr = (double *)malloc(sizeof(double) * height);
+    for(i=0; i<height; i++)
+    {
+        ret_arr[i] = ((double)hashtable[i].running_sum)/((double)hashtable[i].num_nodes);
+    }
+    *returnSize = height;
+    return ret_arr;
+}
