@@ -1,0 +1,24 @@
+bool hasAlternatingBits(int n){
+    
+    int size = (sizeof(int) * 8);
+
+    bool atEndOfSequence = false;
+    
+    int prevVal = n & 1;
+    int bitVal;
+
+    for (int i=1; i<size; i++) {
+        bitVal = (n >> i) & 1;
+
+        if (atEndOfSequence && bitVal == 1) return false;
+        if ((bitVal  ^ prevVal) != 1){
+            if (bitVal == 0 && prevVal == 0) {
+                atEndOfSequence = true;
+            }
+            else return false;
+        } 
+        prevVal = bitVal;
+    }
+
+    return true;
+}
